@@ -244,7 +244,7 @@ PROCESS(file,user,ZCOGID) ;
  K ^TLIST($J)
  I $D(^SALTS("base64",user)) Do GETRALFS^RALF(file,user)
  
- K ^FILE(file),^NGX(user,file)
+ K ^FILE(file),^NGX(user,file),^TSV(user,file)
  close file
  o file:(readonly):0
  S cnt=1,qf=0
