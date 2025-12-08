@@ -51,7 +51,7 @@ GETUPRN(adrec,qpost,orgpost,country,summary,writejson,noassert) ;Returns the res
  ;qpost IS deprecated
  ;country is deprecated
  ;orgpost is the post code of a local organisatoin to narrow down search
- k ^TUPRN($J)
+ k ^TUPRN($J),^TALT($J)
  s writejson=+$g(writejson)
  ;	
  s noassert=+$g(noassert)
