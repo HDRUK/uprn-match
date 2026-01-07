@@ -19,6 +19,67 @@ curl -u {username}:{password} {endpoint}/api2/getinfo?adrec=10+Downing+St,Westmi
 '{"Address_format":"good","Postcode_quality":"good","Matched":true,"UPRN":"100023336956","Qualifier":"Best (residential) match","Classification":"RD04","ClassTerm":"Terraced","Algorithm":"10-match1","ABPAddress":{"Number":"10","Street":"Downing Street","Town":"City Of Westminster","Postcode":"SW1A 2AA"},"Match_pattern":{"Postcode":"equivalent","Street":"equivalent","Number":"equivalent","Building":"equivalent","Flat":"equivalent"}}\n'
 ```
 
+The getinfo route now supports an optional commercial parameter that controls whether the search is residential, commercial, or neutral based on a bit pattern.
+
+## API Behavior
+
+If the commercial parameter is not provided, the API defaults to a residential search.
+
+For a neutral search, the system applies the following selection logic to determine the UPRN.
+
+Given an address candidate, the algorithm selects the first matching UPRN using the following priority order:
+
+1. If the UPRN classification code is *residential*, it is selected.
+2. Otherwise, if the classification code is *commercial*, it is selected.
+
+Bit Pattern Values
+
+* `100` — Residential search
+* `010` — Commercial search
+* `001` — Neutral search
+
+Examples
+
+Commercial Search
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=10+Downing+St,Westminster,London,SW1A2AA&commercial=010"
+```
+
+Neutral Search
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=10+Downing+St,Westminster,London,SW1A2AA&commercial=001"
+```
+
+Residential Search (Explicit)
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=10+Downing+St,Westminster,London,SW1A2AA&commercial=100"
+```
+
+Residential Search (Default)
+If the `commercial` parameter is omitted, the API automatically performs a *residential* search.
+
+## More examples
+
+Commercial Search
+
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=8,Batchelor+Street,ME4+4BJ&commercial=010"
+{"Address_format":"good","Postcode_quality":"good","Matched":true,"BestMatch":{"UPRN":"44052106","Qualifier":"Property","LogicalStatus":"1","Classification":"CR07","ClassTerm":"Restaurant \/ Cafeteria","Algorithm":"1-match","ABPAddress":{"Number":"8","Street":"Batchelor Street","Town":"Medway","Postcode":"ME4 4BJ"},"Match_pattern":{"Postcode":"equivalent","Street":"equivalent","Number":"equivalent","Building":"equivalent","Flat":"equivalent"}}}
+```
+
+Residential Search (Explicit)
+
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=8,Batchelor+Street,ME4+4BJ&commercial=100"
+{"Address_format":"good","Postcode_quality":"good","Matched":true,"BestMatch":{"UPRN":"44012081","Qualifier":"Property","LogicalStatus":"1","Classification":"RD06","ClassTerm":"Self Contained Flat (Includes Maisonette \/ Apartment)","Algorithm":"1-match","ABPAddress":{"Flat":"flat","Number":"8","Street":"Batchelor Street","Town":"Medway","Postcode":"ME4 4BJ"},"Match_pattern":{"Postcode":"equivalent","Street":"equivalent","Number":"equivalent","Building":"equivalent","Flat":"equivalent"}}}
+```
+
+Neutral Search
+```
+curl -u {username}:{password} "{endpoint}/api2/getinfo?adrec=8,Batchelor+Street,ME4+4BJ&commercial=001"
+{"Address_format":"good","Postcode_quality":"good","Matched":true,"BestMatch":{"UPRN":"44012081","Qualifier":"Property","LogicalStatus":"1","Classification":"RD06","ClassTerm":"Self Contained Flat (Includes Maisonette \/ Apartment)","Algorithm":"1-match","ABPAddress":{"Flat":"flat","Number":"8","Street":"Batchelor Street","Town":"Medway","Postcode":"ME4 4BJ"},"Match_pattern":{"Postcode":"equivalent","Street":"equivalent","Number":"equivalent","Building":"equivalent","Flat":"equivalent"}}}
+```
+
 ## An interface that allows a user to upload a file of address candidates, that are processed immediately, after the file has been uploaded.
 
 The address file to be uploaded must contain two columns separated by a single tab character with a .txt extension
@@ -31,13 +92,25 @@ The second column is an address string including a postcode at the end with a co
 
 The third column is the postal region (not mandatory, but useful when you don't know the address candidates postcode)
 
-Example records:-
+The fourth column specifies the type of search the system should perform for the address candidate on the same row
+
+## Fourth Column Values
+
+C - Performs a commercial search
+
+N - Performs a neutral search
+
+Any other value or blank - Defaults to a residential search
+
+If an older TSV file is used that does not include the fourth column, the system will automatically perform a residential search by default.
+
+Example records:
 ```
-1[tab]10 Downing St,Westminster,London,SW1A2AA
-2[tab]10 Downing St,Westminster,London[tab]SW
-3[tab]Bridge Street,London,SW1A 2LW
-4[tab]221b Baker St,Marylebone,London,NW1 6XE
-5[tab]3 Abbey Rd,St John's Wood,London,NW8 9AY
+1[tab]10 Downing St,Westminster,London,SW1A2AA[tab]SW[tab]C
+2[tab]10 Downing St,Westminster,London[tab]SW[tab]N
+3[tab]Bridge Street,London,SW1A 2LW[tab][tab]R
+4[tab]221b Baker St,Marylebone,London,NW1 6XE[tab]NW
+5[tab]3 Abbey Rd,St John's Wood,London,NW8 9AY[tab]NW[tab]
 ```
 
 ```
