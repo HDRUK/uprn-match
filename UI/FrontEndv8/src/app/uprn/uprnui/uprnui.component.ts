@@ -743,7 +743,7 @@ export class UPRNComponent implements OnInit {
       building = jsonObj.ABPAddress["Building"];
       town = jsonObj.ABPAddress["Town"];
       postcode = jsonObj.ABPAddress["Postcode"];
-      organisation = jsonObj.ABPAddress["Organisaton"]; // spelt wrong in m code
+      organisation = jsonObj.ABPAddress["Organisation"]; // spelt wrong in m code
     }
 
     if (jsonObj.hasOwnProperty('Match_pattern')) {

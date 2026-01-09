@@ -149,7 +149,7 @@ GETCSV(result,arguments) ;
  .quit
  S LOCALITY=$get(b("BestMatch","ABPAddress","Locality"))
  S NUMBER=$g(b("BestMatch","ABPAddress","Number"))
- S ORG=$g(b("BestMatch","ABPAddress","Organisaton"))
+ S ORG=$g(b("BestMatch","ABPAddress","Organisation"))
  S POSTCODE=$g(b("BestMatch","ABPAddress","Postcode"))
  S STREET=$g(b("BestMatch","ABPAddress","Street"))
  S TOWN=$g(b("BestMatch","ABPAddress","Town"))

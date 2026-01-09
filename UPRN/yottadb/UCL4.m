@@ -68,7 +68,7 @@ COMM write !,"commercials (Y/N)?: "
  ..quit
  .S LOCALITY=$get(b("ABPAddress","Locality"))
  .S NUMBER=$g(b("ABPAddress","Number"))
- .S ORG=$g(b("ABPAddress","Organisaton"))
+ .S ORG=$g(b("ABPAddress","Organisation"))
  .S POSTCODE=$g(b("ABPAddress","Postcode"))
  .S STREET=$g(b("ABPAddress","Street"))
  .S TOWN=$g(b("ABPAddress","Town"))

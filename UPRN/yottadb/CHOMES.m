@@ -229,7 +229,7 @@ REP(job) ;
  ....; decode the json
  ....K B
  ....D DECODE^VPRJSON($NAME(abpjson),$NAME(B),$NAME(E))
- ....S org=$get(B("ABPAddress","Organisaton"))
+ ....S org=$get(B("ABPAddress","Organisation"))
  ....s street=$get(B("ABPAddress","Street"))
  ....s flat=$get(B("ABPAddress","Flat"))
  ....s build=$get(B("ABPAddress","Building"))

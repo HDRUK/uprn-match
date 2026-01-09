@@ -167,7 +167,7 @@ MATCHED(best,commerce)  ;Matches either commercial or residential
  i post'="" d
  . s json=json_"""Postcode"":"""_post_""","
  i org'="" d
- . s json=json_"""Organisaton"":"""_org_""","
+ . s json=json_"""Organisation"":"""_org_""","
  i $e(json,$l(json))="," s json=$e(json,1,$l(json)-1)
  s json=json_"},"
  D PATTERN(matchrec,.json)
