@@ -235,18 +235,29 @@ The address file to be uploaded must:
 - have a .txt extension
 - include no headers
 - contain two columns separated by a single tab character
-  - The first line must not contain any header information, only data
   - The first column is a unique numeric row id
-  - The second column is the address (with commas between each address
-    line)
+  - The second column is an address string including a postcode at the
+    end with a comma separating the address from the postcode
+  - The (optional) third column is the postal region (for when you don’t
+    know the full postcode)
+  - The (optional) fourth column specifies the search priority for the
+    address in that row:
+    - R for Residential (default),
+    - C for Commercial,
+    - N for Neutral.
+    - A Neutral (N) search will return both residential and commercial
+      results, but will prioritise residential matches.
+  - If the column is left blank, a Residential (R) search will be
+    performed by default.
 
 ##### Example upload file content:
 
 ``` tsv
-1 ⭾ 10 Downing St,Westminster,London,SW1A2AA
-3 ⭾ Bridge Street,London,SW1A 2LW
-4 ⭾ 221b Baker St,Marylebone,London,NW1 6XE
-5 ⭾ 3 Abbey Rd,St John's Wood,London,NW8 9AY
+1[tab]10 Downing St,Westminster,London,SW1A2AA
+2[tab]10 Downing St,Westminster,London[tab]SW
+3[tab]Bridge Street,London,SW1A 2LW
+4[tab]221b Baker St,Marylebone,London,NW1 6XE
+5[tab]3 Abbey Rd,St John's Wood,London,NW8 9AY
 ```
 
 #### Download
@@ -265,7 +276,6 @@ from AddressBase Premium (plus a RALF if you’ve previously uploaded a
 | 1 | 100023336956 |  | 10-match1 | RD04 | equivalent | equivalent | equivalent | equivalent | equivalent | 10 | SW1A 2AA | Downing Street | City Of Westminster | Property | 10 Downing St,Westminster,London,SW1A2AA |  | 51.5035410 | -.1276700 | 51.5035410 | 530047.00 | 179951.00 | C30921C8404087803C3687301351FF41CCB4A5E8F3691070723293C8BD654CBB | Terraced |  | 1 |
 | 2 | 200002501505 |  | 550-match5a | PP | candidate field dropped | equivalent | equivalent | equivalent | equivalent |  | SW1A 2LW | Bridge Street | City Of Westminster | Property | Bridge Street,London,SW1A 2LW | Portcullis House | 51.5013476 | -.1243451 | 51.5013476 | 530284.00 | 179713.00 | 4D19E2EB66A2C12BD56B93D96CFBBE5B74525AEFC4C68329BE87B55C43EA4C36 | Property Shell |  | 1 |
 | 3 | 100023071949 |  | 3200-match61A170 | CR08 | moved from Number | equivalent | moved to Building | equivalent | equivalent |  | NW1 6XE | Baker Street | London | Property | 221b Baker St,Marylebone,London,NW1 6XE | 221B | 51.5237510 | -.1585550 | 51.5237510 | 527847.00 | 182144.00 | 7727B90C7C3A744AF6FD8D5A4FEB6767B1EACBBC721B85EED6AE86EDD2B0BA9C | Shop / Showroom |  | 1 |
-| 4 | 100023122909 |  | 40-match1 | CR08 | moved from Street | moved from Number | moved from Flat | equivalent | moved from Building | 3 | NW8 9AY | Abbey Road | City Of Westminster | Property | 3 Abbey Rd,St Johns Wood,London,NW8 9AY |  | 51.5321562 | -.1779541 | 51.5321562 | 526478.00 | 183045.00 | 6E479D3F8DA8A548C631622EA8640E1CE9030289C5ED4458B91A4F6C4F92C799 | Shop / Showroom |  | 1 |
 
 </div>
 

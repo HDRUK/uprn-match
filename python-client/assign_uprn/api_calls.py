@@ -66,12 +66,14 @@ class AssignAPIClient:
                 return value
         raise ValueError(f"Environment variable '{var_name}' not found in environment or {dotenv_path} file.")
 
-    def address_search(self, address: str):
+    def address_search(self, address: str, commercial: str = None):
         """
         Search for a UPRN by address.
+        If the optional commercial parameter is not provided, the API defaults to a residential search.
         
         Args: 
             address (str): An address on a single line, each element separated with a comma.
+            commercial (str): Bit Pattern Values: 100 — Residential search; 010 — Commercial search; 001 — Residential or Commercial search
         
         Returns:
             requests.Response: JSON representation of the matching AddressBase Premium record.
@@ -100,23 +102,37 @@ class AssignAPIClient:
             'Flat': 'equivalent'}}}
         """
         import requests
-        response = requests.get(
-            f"{self.ASSIGN_ENDPOINT}/getinfo?adrec={address}",
-            auth=(self.ASSIGN_USER, self.ASSIGN_PASS)
-        )
+        url = f"{self.ASSIGN_ENDPOINT}/getinfo"
+        params = {"adrec": address}
+        if commercial is not None:
+            params["commercial"] = commercial
+        response = requests.get(url, params=params, auth=(self.ASSIGN_USER, self.ASSIGN_PASS))
         return response
+
 
     def upload(self, infilepath: str):
         """
         Upload a text file of TSV address records to the ASSIGN API, or upload an encrypted salt.
 
-        For address uploads, format is two columns: id and address, e.g.:
+        The first line must not contain any header information
+        Format of address uploads is two to four columns: id, address, postal area (optional, if postcode is unknown), residental/commercial (optional):
+
+        The first column is a unique numeric row id
+        The second column is an address string including a postcode at the end with a comma separating the address from the postcode
+        The (optional) third column is the postal region (useful when you don't know the full postcode)
+        The (optional) fourth column specifies the search priority for the address in that row: 
+            R for Residential (default), 
+            C for Commercial,
+            N for Neutral. 
+        A Neutral (N) search will return both residential and commercial results, but will prioritise residential matches. 
+        If the column is left blank, a Residential (R) search will be performed by default.
 
         ```tsv
-        1 ⭾ 10 Downing St,Westminster,London,SW1A2AA
-        2 ⭾ Bridge Street,London,SW1A 2LW
-        3 ⭾ 221b Baker St,Marylebone,London,NW1 6XE
-        4 ⭾ 3 Abbey Rd,St Johns Wood,London,NW8 9AY
+        1[tab]10 Downing St,Westminster,London,SW1A2AA
+        2[tab]10 Downing St,Westminster,London[tab]SW
+        3[tab]Bridge Street,London,SW1A 2LW
+        4[tab]221b Baker St,Marylebone,London,NW1 6XE
+        5[tab]3 Abbey Rd,St John's Wood,London,NW8 9AY
         ```
         
         Args:
@@ -125,13 +141,13 @@ class AssignAPIClient:
         Returns:
             requests.Response: API response confirming whether upload was successful.
         
-        Example:
+        Example addresses file upload:
         
             > infilepath='../data/external/test-addresses.txt'
             > client.upload(infilepath=infilepath).json()
             {'upload': {'status': 'OK'}}
 
-            OR FOR SALT
+        Example salt file upload (optional)
 
             > infilepath='../data/external/test.EncryptedSalt'
             > client.upload(infilepath=infilepath).json()
@@ -146,6 +162,7 @@ class AssignAPIClient:
         }
         response = requests.post(url, files=files, auth=(self.ASSIGN_USER, self.ASSIGN_PASS))
         return response
+
 
     def download(self, infilepath: str, outfilepath: str = '../data/processed/assign-uprn.tsv'):
         """
