@@ -433,5 +433,7 @@ AUTHEN(HTTPAUTH,AUTHNODE)
  set REC=$get(^BUSER("USER",un))
  if REC="" quit 0
  set zpwd=$$DERCFOUR^EWEBRC4($p(REC,"~",1),^ICONFIG("KEY"))
- if zpwd=pwd quit 1  ; Sign on successful!
+ if zpwd=pwd do  quit 1  ; Sign on successful!
+ .if $get(HTTPREQ("header","user-id"))'="" s un=HTTPREQ("header","user-id"),ZCOGID=1
+ .quit
  QUIT 0

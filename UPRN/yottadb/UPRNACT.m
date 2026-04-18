@@ -13,6 +13,7 @@ ACT(result,arguments)
  S C=1
  S ^TMP($J,C)="[",C=$I(C)
  S U=$get(arguments("u"))
+ if $g(un)'="" s U=un
  
  S I=""
  F  S I=$O(^ACTIVITY(U,I),-1) Q:I=""  D
