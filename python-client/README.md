@@ -184,11 +184,22 @@ of Nottingham (the maintainers of OpenPseudonymiser).
 
 ## Using the API
 
+### Instantiate client with access credentials
+
+The client looks for a `.env` file, if none is found, it will also check
+`os.getenv` to see if the variables have been set externally:
+
+``` python
+from assign_uprn.api_calls import AssignAPIClient
+client = AssignAPIClient(dotenv_path='./.env')
+```
+
 ### Single address validation
 
 A single address can be sent for matching within a single HTTP request.
-A search for `10+Downing+St,Westminster,London,SW1A2AA` would receive
-the following response:
+A search for:
+`client.address_search('10 Downing St,Westminster,London,SW1A2AA')`
+would receive the following response:
 
 ``` json
 {
@@ -260,6 +271,14 @@ The address file to be uploaded must:
 5[tab]3 Abbey Rd,St John's Wood,London,NW8 9AY
 ```
 
+##### Example upload:
+
+``` python
+> infilepath='../data/external/test-addresses.txt'
+> client.upload(infilepath=infilepath).json()
+{'upload': {'status': 'OK'}}
+```
+
 #### Download
 
 Uploads are processed straightaway and can be downloaded by referencing
@@ -278,6 +297,15 @@ from AddressBase Premium (plus a RALF if you’ve previously uploaded a
 | 3 | 100023071949 |  | 3200-match61A170 | CR08 | moved from Number | equivalent | moved to Building | equivalent | equivalent |  | NW1 6XE | Baker Street | London | Property | 221b Baker St,Marylebone,London,NW1 6XE | 221B | 51.5237510 | -.1585550 | 51.5237510 | 527847.00 | 182144.00 | 7727B90C7C3A744AF6FD8D5A4FEB6767B1EACBBC721B85EED6AE86EDD2B0BA9C | Shop / Showroom |  | 1 |
 
 </div>
+
+##### Example download:
+
+``` python
+> infilepath = '../data/external/test-addresses.txt'
+> outfilepath = '../data/processed/assign-uprn.tsv'
+> client.download(infilepath, outfilepath).status_code
+200
+```
 
 #### Uploading an encrypted salt (optional)
 
