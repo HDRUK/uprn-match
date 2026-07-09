@@ -1025,7 +1025,7 @@ f   ;Flat
 	. i $$flateq^UPRNU(tbno,build) d	 
 	. . i $$equiv^UPRNU(tstreet,street) d
 	. . . s matched=$$m61("Pe,Sl,N>B,B<N,Fe","a188")
-	i tbuild'="",tbno'="",tstreet'="",street="",bno="",$$equiv^UPRNU(tbuild,build) d  q 0
+	i tbuild'="",tbno'="",tstreet'="",street="",bno="",$$equiv^UPRNU(tbuild,build) d  q
 	. s matchrec="Pe,Sd,Nd,Be,Fe",alg="a37"
 	. d probable
 	q
