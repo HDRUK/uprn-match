@@ -148,7 +148,7 @@ UPLOAD(arguments,body,result)
  .if start=1 set str=$$RemoveBOM(str,.error),start=0
  .if str["------WebKitFormBoundary" s qf=1
  .; python
- .if $e(str,$l(str)-3,$l(str))["--" s qf=1
+ .if $e(str,$l(str)-3,$l(str))["--",str'[$c(9) s qf=1
  .; safari
  .if $E(str,1,28)="----------------------------" s qf=1
  .; curl
